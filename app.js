@@ -9,8 +9,6 @@ const {
 } = require("./controllers/errorHandeling");
 app.get("/api/categories", getCategories);
 
-app.listen(port, () => console.log(`app listening on port ${port}!`));
-
 app.use(errorPSQLHandler);
 app.use(handleCustomErrors);
 app.use(error500Handler);
