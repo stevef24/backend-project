@@ -41,7 +41,6 @@ describe("GET /api/reviews", () => {
 			.expect(200)
 			.then(({ body }) => {
 				const reviews = body.reviews;
-				console.log(reviews, "<-----------");
 				expect(reviews.length).toBe(13);
 				expect(reviews).toBeSortedBy("created_at", { descending: true });
 				reviews.forEach((review) => {
@@ -105,4 +104,13 @@ describe(`GET /api/reviews/:review_id/comments`, () => {
 	it("404 Error if given the wrong path", () => {
 		return request(app).get("/api/banana/:review_id/comments").expect(404);
 	});
+	it("should responds with 400 for a non id string eg get /api/reviews/hello/comments ", () => {
+		return request(app)
+			.get("/api/reviews/hello/comments")
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe("Bad request");
+			});
+	});
 });
+``;

@@ -1,4 +1,4 @@
-exports.errorPSQLHandler = (err, res, req, next) => {
+exports.errorPSQLHandler = (err, req, res, next) => {
 	const errors = ["42703", "22P02"];
 	if (errors.includes(err.code)) {
 		res.status(400).send({ msg: "Bad request" });
@@ -7,8 +7,8 @@ exports.errorPSQLHandler = (err, res, req, next) => {
 	}
 };
 exports.handleCustomErrors = (err, res, req, next) => {
-	if (err.status === 404) {
-		res.status(404).send({ msg: "cannot find the requested URL" });
+	if (err.status && err.msg) {
+		res.status(404).send({ err: err.msg });
 	} else {
 		next(err);
 	}

@@ -14,11 +14,20 @@ exports.fetchReviews = () => {
 
 exports.fetchComments = (review_id) => {
 	return db
-		.query(
-			`SELECT * FROM comments 
+		.query(`SELECT * FROM reviews WHERE review_id=$1 `, [review_id])
+		.then(({ rows }) => {
+			if (!rows.length) {
+				return Promise.reject({
+					status: 404,
+					msg: `Cannot find review ${review_id}`,
+				});
+			}
+			return db.query(
+				`SELECT * FROM comments 
 			WHERE review_id = $1 
 			ORDER BY created_at desc;`,
-			[review_id]
-		)
+				[review_id]
+			);
+		})
 		.then(({ rows }) => rows);
 };

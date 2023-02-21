@@ -18,7 +18,6 @@ app.get("/api/reviews/:review_id/comments", getAllComments);
 
 app.use(errorPSQLHandler);
 app.use(error500Handler);
-
 app.all("/*", handleCustomErrors);
 
 module.exports = app;
