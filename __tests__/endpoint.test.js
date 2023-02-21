@@ -129,3 +129,52 @@ describe("GET /api/reviews/:review_id", () => {
 		return request(app).get("/api/reviews/1000000").expect(404);
 	});
 });
+
+describe("POST /api/reviews/:review_id/comments", () => {
+	it("should return 201 and the posted data", () => {
+		const data = {
+			body: "hello world this is my code ",
+			author: "mallionaire",
+		};
+		return request(app)
+			.post("/api/reviews/2/comments")
+			.send(data)
+			.expect(201)
+			.then(({ body }) => {
+				expect(body.postedObj).toMatchObject({
+					comment_id: expect.any(Number),
+					body: "hello world this is my code ",
+					review_id: 2,
+					author: "mallionaire",
+					votes: 0,
+					created_at: expect.any(String),
+				});
+			});
+	});
+	it("400 error if given the correct path but the review does not exist", () => {
+		const data = {
+			body: "hello world this is my code ",
+			author: "mallionaire",
+		};
+		return request(app)
+			.post("/api/reviews/5000/comments")
+			.send(data)
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe("No review found for review_id: 5000");
+			});
+	});
+	it("get 400 bad request if the incorrect path has bee given ", () => {
+		const data = {
+			body: "hello world this is my code ",
+			author: "mallionaire",
+		};
+		return request(app)
+			.post("/api/reviews/hello/comments")
+			.send(data)
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe("Bad request");
+			});
+	});
+});

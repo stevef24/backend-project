@@ -28,3 +28,26 @@ exports.fetchReviewsById = (reviewId) => {
 				: rows;
 		});
 };
+
+exports.newComment = (review_id, commentObj) => {
+	const { body, author } = commentObj;
+	return db
+		.query(`SELECT * FROM reviews WHERE review_id= $1`, [review_id])
+		.then(({ rows }) => {
+			if (!rows.length) {
+				return Promise.reject({
+					status: 404,
+					msg: `No review found for review_id: ${review_id}`,
+				});
+			}
+		})
+		.then(() => {
+			return db.query(
+				`INSERT INTO comments (body, author, review_id)
+				VALUES ($1, $2, $3)
+				RETURNING *;`,
+				[body, author, review_id]
+			);
+		})
+		.then(({ rows }) => rows[0]);
+};
