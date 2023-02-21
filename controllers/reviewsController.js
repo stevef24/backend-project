@@ -3,7 +3,6 @@ const { fetchReviews, fetchReviewsById } = require("../models/reviewsModel");
 exports.getReviews = (req, res, next) => {
 	fetchReviews()
 		.then((review) => {
-			console.log(review);
 			res.status(200).send({ reviews: review });
 		})
 		.catch((err) => next(err));

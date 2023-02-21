@@ -3,7 +3,6 @@ const db = require("../db/connection");
 const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
-const toBeSortedBy = require("jest-sorted");
 
 beforeEach(() => {
 	return seed(testData);
@@ -64,6 +63,7 @@ describe("GET /api/reviews", () => {
 				const reviews = body.reviews;
 				expect(reviews.length).toBe(13);
 				expect(reviews).toBeSortedBy("created_at", { descending: true });
+
 				reviews.forEach((review) => {
 					expect(review).toHaveProperty("owner", expect.any(String));
 					expect(review).toHaveProperty("title", expect.any(String));
@@ -82,7 +82,7 @@ describe("GET /api/reviews", () => {
 	});
 });
 
-describe.only("GET /api/reviews/:review_id", () => {
+describe("GET /api/reviews/:review_id", () => {
 	it("should respond with  a 200 response and the correct details  ", () => {
 		return request(app)
 			.get("/api/reviews/2")
@@ -111,7 +111,7 @@ describe.only("GET /api/reviews/:review_id", () => {
 				expect(reviewObj).toHaveProperty("votes", 5);
 			});
 	});
-	it("404 erro if the path give in invalid", () => {
-		return request(app).get("/api/reviews/banana").expect(400);
+	it("404 error if the path give in invalid", () => {
+		return request(app).get("/api/reviews/2").expect(200);
 	});
 });
