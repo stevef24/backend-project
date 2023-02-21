@@ -84,8 +84,8 @@ describe("GET /api/reviews", () => {
 	});
 });
 
-describe.only(`GET /api/reviews/:review_id/comments`, () => {
-	it("return a 200 request", () => {
+describe(`GET /api/reviews/:review_id/comments`, () => {
+	it("return a 200 request and the data in the correct order ", () => {
 		return request(app)
 			.get("/api/reviews/2/comments")
 			.expect(200)
@@ -100,6 +100,10 @@ describe.only(`GET /api/reviews/:review_id/comments`, () => {
 					expect(comment).toHaveProperty("votes", expect.any(Number));
 					expect(comment).toHaveProperty("created_at", expect.any(String));
 				});
+				expect(comments).toBeSortedBy("created_at", { descending: true });
 			});
+	});
+	it("404 Error if given the wrong path", () => {
+		return request(app).get("/api/banana/:review_id/comments").expect(404);
 	});
 });

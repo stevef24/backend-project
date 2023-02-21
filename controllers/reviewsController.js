@@ -11,7 +11,6 @@ exports.getAllComments = (req, res, next) => {
 	const { review_id } = req.params;
 	fetchComments(review_id)
 		.then((data) => {
-			// console.log(data);
 			res.status(200).send({ comments: data });
 		})
 		.catch((err) => next(err));
