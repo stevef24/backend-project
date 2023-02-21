@@ -119,10 +119,7 @@ describe("GET /api/reviews/:review_id", () => {
 			.get("/api/reviews/1000000")
 			.expect(404)
 			.then(({ body }) => {
-				expect(body).toHaveProperty(
-					"msg",
-					"No review found for review_id: 1000000"
-				);
+				expect(body.err).toBe("No review found for review_id: 1000000");
 			});
 	});
 	it("404 error if the path give in invalid", () => {
@@ -161,4 +158,3 @@ describe(`GET /api/reviews/:review_id/comments`, () => {
 			});
 	});
 });
-``;
