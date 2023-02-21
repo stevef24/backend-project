@@ -11,3 +11,14 @@ exports.fetchReviews = () => {
 		)
 		.then(({ rows }) => rows);
 };
+
+exports.fetchComments = (review_id) => {
+	return db
+		.query(
+			`SELECT * FROM comments 
+			WHERE review_id = $1 
+			ORDER BY created_at desc;`,
+			[review_id]
+		)
+		.then(({ rows }) => rows);
+};

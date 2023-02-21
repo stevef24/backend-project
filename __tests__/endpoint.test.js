@@ -83,3 +83,23 @@ describe("GET /api/reviews", () => {
 		return request(app).get("/api/reviewsas").expect(404);
 	});
 });
+
+describe.only(`GET /api/reviews/:review_id/comments`, () => {
+	it("return a 200 request", () => {
+		return request(app)
+			.get("/api/reviews/2/comments")
+			.expect(200)
+			.then(({ body }) => {
+				const comments = body.comments;
+				expect(comments).toHaveLength(3);
+				comments.forEach((comment) => {
+					expect(comment).toHaveProperty("comment_id", expect.any(Number));
+					expect(comment).toHaveProperty("body", expect.any(String));
+					expect(comment).toHaveProperty("review_id", expect.any(Number));
+					expect(comment).toHaveProperty("author", expect.any(String));
+					expect(comment).toHaveProperty("votes", expect.any(Number));
+					expect(comment).toHaveProperty("created_at", expect.any(String));
+				});
+			});
+	});
+});
