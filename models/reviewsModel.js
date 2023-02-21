@@ -19,5 +19,12 @@ exports.fetchReviewsById = (reviewId) => {
 				WHERE review_id=$1;`,
 			[reviewId]
 		)
-		.then(({ rows }) => rows);
+		.then(({ rows }) => {
+			return rows.length === 0
+				? Promise.reject({
+						status: 404,
+						msg: `No review found for review_id: ${reviewId}`,
+				  })
+				: rows;
+		});
 };

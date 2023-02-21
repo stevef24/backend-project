@@ -7,8 +7,8 @@ exports.errorPSQLHandler = (err, req, res, next) => {
 	}
 };
 exports.handleCustomErrors = (err, req, res, next) => {
-	if (err.status === 404) {
-		res.status(404).send({ msg: "Not Found" });
+	if (err.status && err.msg) {
+		res.status(err.status).send({ msg: err.msg });
 	} else {
 		next(err);
 	}

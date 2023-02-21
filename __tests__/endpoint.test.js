@@ -80,6 +80,9 @@ describe("GET /api/reviews", () => {
 	it("404 err if the url path is incorrect", () => {
 		return request(app).get("/api/reviewsas").expect(404);
 	});
+	it("404 err if the url path is correct but the user doesn't exist ", () => {
+		return request(app).get("/api/10000").expect(404);
+	});
 });
 
 describe("GET /api/reviews/:review_id", () => {
@@ -111,7 +114,18 @@ describe("GET /api/reviews/:review_id", () => {
 				expect(reviewObj).toHaveProperty("votes", 5);
 			});
 	});
+	it("404 error if the ID is invalid", () => {
+		return request(app)
+			.get("/api/reviews/1000000")
+			.expect(404)
+			.then(({ body }) => {
+				expect(body).toHaveProperty(
+					"msg",
+					"No review found for review_id: 1000000"
+				);
+			});
+	});
 	it("404 error if the path give in invalid", () => {
-		return request(app).get("/api/reviews/2").expect(200);
+		return request(app).get("/api/reviews/1000000").expect(404);
 	});
 });
