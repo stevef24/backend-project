@@ -12,6 +12,7 @@ exports.fetchReviews = () => {
 		.then(({ rows }) => rows);
 };
 
+
 exports.fetchComments = (review_id) => {
 	return db
 		.query(`SELECT * FROM reviews WHERE review_id=$1 `, [review_id])
@@ -30,4 +31,21 @@ exports.fetchComments = (review_id) => {
 			);
 		})
 		.then(({ rows }) => rows);
+
+exports.fetchReviewsById = (reviewId) => {
+	return db
+		.query(
+			`SELECT * FROM reviews 
+				WHERE review_id=$1;`,
+			[reviewId]
+		)
+		.then(({ rows }) => {
+			return rows.length === 0
+				? Promise.reject({
+						status: 404,
+						msg: `No review found for review_id: ${reviewId}`,
+				  })
+				: rows;
+		});
+
 };
