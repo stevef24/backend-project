@@ -63,7 +63,6 @@ describe("GET /api/reviews", () => {
 			.expect(200)
 			.then(({ body }) => {
 				const reviews = body.reviews;
-				console.log(reviews, "<-----------");
 				expect(reviews.length).toBe(13);
 				expect(reviews).toBeSortedBy("created_at", { descending: true });
 				reviews.forEach((review) => {
