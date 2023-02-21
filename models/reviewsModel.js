@@ -11,3 +11,13 @@ exports.fetchReviews = () => {
 		)
 		.then(({ rows }) => rows);
 };
+
+exports.fetchReviewsById = (reviewId) => {
+	return db
+		.query(
+			`SELECT * FROM reviews 
+				WHERE review_id=$1;`,
+			[reviewId]
+		)
+		.then(({ rows }) => rows);
+};
