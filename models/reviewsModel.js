@@ -31,6 +31,7 @@ exports.fetchComments = (review_id) => {
 		})
 		.then(({ rows }) => rows);
 };
+
 exports.fetchReviewsById = (reviewId) => {
 	return db
 		.query(
@@ -48,17 +49,12 @@ exports.fetchReviewsById = (reviewId) => {
 		});
 };
 
-exports.newComment = (review_id, commentObj) => {
-	const { body, author } = commentObj;
-	console.log(commentObj);
-	if (!body || !author)
-		return Promise.reject({
-			status: 400,
-			msg: "Body and author name mus be valid!",
-		});
+
+exports.updateReview = (review_id, patchUpdates) => {
+	const { inc_votes } = patchUpdates;
 	return db
-		.query(`SELECT * FROM users where username = $1`, [author])
-		.then(({ rows }) => {
+		.query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
+    .then(({ rows }) => {
 			if (!rows.length) {
 				return Promise.reject({
 					status: 404,
@@ -88,3 +84,35 @@ exports.newComment = (review_id, commentObj) => {
 				.then(({ rows }) => rows[0]);
 		});
 };
+
+
+exports.newComment = (review_id, commentObj) => {
+	const { body, author } = commentObj;
+	console.log(commentObj);
+	if (!body || !author)
+		return Promise.reject({
+			status: 400,
+			msg: "Body and author name mus be valid!",
+		});
+	return db
+		.query(`SELECT * FROM users where username = $1`, [author])
+
+		.then(({ rows }) => {
+			if (!rows.length) {
+				return Promise.reject({
+					status: 404,
+					msg: `Bad request!`,
+				});
+			}
+			return rows;
+		})
+		.then(() => {
+			return db.query(
+				`UPDATE reviews
+									SET votes = votes + $1
+									WHERE review_id =$2
+									 RETURNING *`,
+				[inc_votes, review_id]
+			);
+		})
+		.then(({ rows }) => rows[0]);
