@@ -47,3 +47,34 @@ exports.fetchReviewsById = (reviewId) => {
 				: rows;
 		});
 };
+
+exports.updateReview = (review_id, patchUpdates) => {
+	const { inc_votes } = patchUpdates;
+
+	return db
+		.query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
+		.then(({ rows }) => {
+			console.log(rows, "first stage");
+			if (!rows.length) {
+				return Promise.reject({
+					status: 404,
+					msg: `review ${review_id} does not exist`,
+				});
+			}
+			return rows;
+		})
+		.then((rows) => {
+			console.log(rows, "second stage");
+			return db.query(
+				`UPDATE reviews
+									SET votes = votes + $1
+									WHERE review_id =$2
+									 `,
+				[inc_votes, review_id]
+			);
+		})
+		.then(({ rows }) => {
+			console.log(rows, "last stage");
+			return rows;
+		});
+};

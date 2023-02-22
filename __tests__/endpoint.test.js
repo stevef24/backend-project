@@ -158,3 +158,47 @@ describe(`GET /api/reviews/:review_id/comments`, () => {
 			});
 	});
 });
+
+describe.only("PATCH /api/reviews/:review_id", () => {
+	it.only("should return a 200 if the review has been patched successfull  ", () => {
+		const updatedData = { inc_votes: 5 };
+		return request(app)
+			.patch("/api/reviews/2")
+			.send(updatedData)
+			.expect(200)
+			.then(({ body }) => {
+				console.log(body);
+				const review = body.review;
+				expect(review).toHaveProperty("review_id", 2);
+				expect(review).toHaveProperty("title", expect.any(String));
+				expect(review).toHaveProperty("category", expect.any(String));
+				expect(review).toHaveProperty("designer", expect.any(String));
+				expect(review).toHaveProperty("owner", expect.any(String));
+				expect(review).toHaveProperty("review_body", expect.any(String));
+				expect(review).toHaveProperty("review_img_url", expect.any(String));
+				expect(review).toHaveProperty("created_at", expect.any(String));
+				expect(review).toHaveProperty("created_at", expect.any(String));
+				expect(review).toHaveProperty("votes", 5);
+			});
+	});
+	it("should return a 400 for a bad request", () => {
+		const updatedData = { inc_votes: 5 };
+		return request(app)
+			.patch("/api/reviews/hello")
+			.send(updatedData)
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.review.msg).toBe("Bad request");
+			});
+	});
+	it("should return a 404 if the review does not exist ", () => {
+		const updatedData = { inc_votes: 5 };
+		return request(app)
+			.patch("/api/reviews/999999")
+			.send(updatedData)
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe("review 999999 does not exist");
+			});
+	});
+});
