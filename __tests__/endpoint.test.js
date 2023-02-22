@@ -158,7 +158,6 @@ describe("POST /api/reviews/:review_id/comments", () => {
 			.send(data)
 			.expect(404)
 			.then(({ body }) => {
-				console.log(body, "fixing this");
 				expect(body.err).toBe("No review found for review_id: 5000");
 			});
 	});
@@ -218,7 +217,6 @@ describe("POST /api/reviews/:review_id/comments", () => {
 			.send(data)
 			.expect(400)
 			.then(({ body }) => {
-				console.log(body);
 				expect(body.err).toBe("Body and author name must be valid!");
 			});
 	});
@@ -264,7 +262,7 @@ describe("PATCH /api/reviews/:review_id", () => {
 				expect(body.msg).toBe("Bad request");
 			});
 	});
-	it.only("should return a 404 if the review does not exist ", () => {
+	it("should return a 404 if the review does not exist ", () => {
 		const updatedData = { inc_votes: 5 };
 		return request(app)
 			.patch("/api/reviews/999999")
@@ -281,7 +279,6 @@ describe("PATCH /api/reviews/:review_id", () => {
 			.send(updatedData)
 			.expect(200)
 			.then(({ body }) => {
-				console.log(body);
 				const review = body.review;
 				expect(review).toHaveProperty("review_id", 2);
 				expect(review).toHaveProperty("title", "Jenga");

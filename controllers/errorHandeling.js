@@ -1,7 +1,6 @@
 exports.errorPSQLHandler = (err, req, res, next) => {
 	const errors = ["42703", "22P02"];
 	if (errors.includes(err.code)) {
-		console.log("reached here");
 		res.status(400).send({ msg: "Bad request" });
 	} else {
 		next(err);
