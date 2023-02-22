@@ -26,7 +26,7 @@ exports.postComments = (req, res, next) => {
 	const commentObj = req.body;
 	newComment(review_id, commentObj)
 		.then((data) => {
-			res.status(201).send({ postedObj: data });
+			res.status(201).send({ comments: data });
 		})
 		.catch((err) => {
 			next(err);

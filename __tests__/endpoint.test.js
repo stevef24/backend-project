@@ -141,7 +141,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
 			.send(data)
 			.expect(201)
 			.then(({ body }) => {
-				expect(body.postedObj).toMatchObject({
+				expect(body.comments).toMatchObject({
 					comment_id: expect.any(Number),
 					body: "hello world this is my code ",
 					review_id: 2,
@@ -175,6 +175,52 @@ describe("POST /api/reviews/:review_id/comments", () => {
 			.expect(400)
 			.then(({ body }) => {
 				expect(body.msg).toBe("Bad request");
+			});
+	});
+	it("should respond with a 201 to check a new item has been created ignoring extra properties", () => {
+		const data = {
+			body: "hello world this is my code ",
+			author: "mallionaire",
+			votes: 5000,
+		};
+		return request(app)
+			.post("/api/reviews/2/comments")
+			.send(data)
+			.expect(201)
+			.then(({ body }) => {
+				expect(body.comments).toMatchObject({
+					comment_id: expect.any(Number),
+					body: "hello world this is my code ",
+					review_id: 2,
+					author: "mallionaire",
+					votes: 0,
+					created_at: expect.any(String),
+				});
+			});
+	});
+	it("404 if the username does not exist ", () => {
+		const data = {
+			body: "hello world this is my code ",
+			author: "stav123",
+		};
+		return request(app)
+			.post("/api/reviews/2/comments")
+			.send(data)
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe("User does not exist");
+			});
+	});
+	it("400 for missing required field/s for example there is no username or body properties. ", () => {
+		const data = {
+			body: "hello world this is my code ",
+		};
+		return request(app)
+			.post("/api/reviews/2/comments")
+			.send(data)
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe("Bad request!");
 			});
 	});
 });
