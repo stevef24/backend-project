@@ -2,9 +2,8 @@ const express = require("express");
 const app = express();
 const { getCategories } = require("./controllers/categoriesControllers");
 const {
-	getReviews,
-	getReviewsById,
-	postComments,
+
+	getReviews, getAllComments, getReviewsById,postComments,
 } = require("./controllers/reviewsController");
 const {
 	errorPSQLHandler,
@@ -18,16 +17,25 @@ app.get("/api/categories", getCategories);
 
 app.get("/api/reviews", getReviews);
 
+
+app.get("/api/reviews/:review_id/comments", getAllComments);
+
 app.get("/api/reviews/:review_id", getReviewsById);
+
 
 app.post("/api/reviews/:review_id/comments", postComments);
 
-app.all("*", (req, res, next) => {
-	res.status(404).send({ msg: "Path not found" });
-});
 
 app.use(errorPSQLHandler);
 app.use(handleCustomErrors);
 app.use(error500Handler);
+
+
+app.all("/*", handleCustomErrors);
+
+
+app.all("*", (req, res, next) => {
+	res.status(404).send({ msg: "Path not found" });
+});
 
 module.exports = app;
