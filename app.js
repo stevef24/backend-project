@@ -6,7 +6,9 @@ const {
 	getAllComments,
 	getReviewsById,
 	patchReview,
+	postComments,
 } = require("./controllers/reviewsController");
+
 const {
 	errorPSQLHandler,
 	handleCustomErrors,
@@ -23,6 +25,8 @@ app.get("/api/reviews/:review_id/comments", getAllComments);
 
 app.get("/api/reviews/:review_id", getReviewsById);
 app.patch("/api/reviews/:review_id", patchReview);
+
+app.post("/api/reviews/:review_id/comments", postComments);
 
 app.use(errorPSQLHandler);
 app.use(handleCustomErrors);
