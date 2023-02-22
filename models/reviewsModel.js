@@ -61,7 +61,7 @@ exports.updateReview = (review_id, patchUpdates) => {
 			}
 			return rows;
 		})
-		.then((rows) => {
+		.then(() => {
 			return db.query(
 				`UPDATE reviews
 									SET votes = votes + $1

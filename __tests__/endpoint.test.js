@@ -160,7 +160,7 @@ describe(`GET /api/reviews/:review_id/comments`, () => {
 });
 
 describe("PATCH /api/reviews/:review_id", () => {
-	it("should return a 200 if the review has been patched successfull  ", () => {
+	it("should return a 200 with the correct properties  ", () => {
 		const updatedData = { inc_votes: 5 };
 		return request(app)
 			.patch("/api/reviews/2")
@@ -176,11 +176,20 @@ describe("PATCH /api/reviews/:review_id", () => {
 				expect(review).toHaveProperty("review_body", expect.any(String));
 				expect(review).toHaveProperty("review_img_url", expect.any(String));
 				expect(review).toHaveProperty("created_at", expect.any(String));
-				expect(review).toHaveProperty("created_at", expect.any(String));
 				expect(review).toHaveProperty("votes", 10);
 			});
 	});
-	it("should return a 400 for a bad request", () => {
+	it("should return an updated value of the vote property  ", () => {
+		const updatedData = { inc_votes: 100 };
+		return request(app)
+			.patch("/api/reviews/2")
+			.send(updatedData)
+			.expect(200)
+			.then(({ body }) => {
+				expect(body.review).toHaveProperty("votes", 105);
+			});
+	});
+	it("should return a 400 for a request that the correct path but wrong inputs", () => {
 		const updatedData = { inc_votes: 5 };
 		return request(app)
 			.patch("/api/reviews/hello")
@@ -207,16 +216,22 @@ describe("PATCH /api/reviews/:review_id", () => {
 			.send(updatedData)
 			.expect(200)
 			.then(({ body }) => {
+				console.log(body);
 				const review = body.review;
 				expect(review).toHaveProperty("review_id", 2);
 				expect(review).toHaveProperty("title", "Jenga");
-				expect(review).toHaveProperty("category", expect.any(String));
-				expect(review).toHaveProperty("designer", expect.any(String));
-				expect(review).toHaveProperty("owner", expect.any(String));
-				expect(review).toHaveProperty("review_body", expect.any(String));
-				expect(review).toHaveProperty("review_img_url", expect.any(String));
-				expect(review).toHaveProperty("created_at", expect.any(String));
-				expect(review).toHaveProperty("created_at", expect.any(String));
+				expect(review).toHaveProperty("category", "dexterity");
+				expect(review).toHaveProperty("designer", "Leslie Scott");
+				expect(review).toHaveProperty("owner", "philippaclaire9");
+				expect(review).toHaveProperty(
+					"review_body",
+					"Fiddly fun for all the family"
+				);
+				expect(review).toHaveProperty(
+					"review_img_url",
+					"https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700"
+				);
+				expect(review).toHaveProperty("created_at", "2021-01-18T10:01:41.251Z");
 				expect(review).toHaveProperty("votes", 10);
 			});
 	});
