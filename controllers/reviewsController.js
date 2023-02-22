@@ -31,6 +31,7 @@ exports.postComments = (req, res, next) => {
 			res.status(201).send({ comments: data });
 		})
 		.catch((err) => {
+			console.log(err);
 			next(err);
 		});
 };

@@ -49,16 +49,15 @@ exports.fetchReviewsById = (reviewId) => {
 		});
 };
 
-
 exports.updateReview = (review_id, patchUpdates) => {
 	const { inc_votes } = patchUpdates;
 	return db
 		.query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
-    .then(({ rows }) => {
+		.then(({ rows }) => {
 			if (!rows.length) {
 				return Promise.reject({
 					status: 404,
-					msg: "User does not exist",
+					msg: "Bad request!",
 				});
 			}
 		})
@@ -75,6 +74,48 @@ exports.updateReview = (review_id, patchUpdates) => {
 				})
 				.then(() => {
 					return db.query(
+						`UPDATE reviews
+											SET votes = votes + $1
+											WHERE review_id =$2
+											 RETURNING *`,
+						[inc_votes, review_id]
+					);
+				})
+				.then(({ rows }) => rows[0]);
+		});
+};
+
+exports.newComment = (review_id, commentObj) => {
+	const { body, author } = commentObj;
+	if (!body || !author)
+		return Promise.reject({
+			status: 400,
+			msg: "Body and author name must be valid!",
+		});
+	return db
+		.query(`SELECT * FROM reviews WHERE review_id= $1`, [review_id])
+		.then(({ rows }) => {
+			if (!rows.length) {
+				return Promise.reject({
+					status: 404,
+					msg: `No review found for review_id: ${review_id}`,
+				});
+			}
+		})
+		.then(() => {
+			return db
+				.query(`SELECT * FROM users where username = $1`, [author])
+				.then(({ rows }) => {
+					if (!rows.length) {
+						return Promise.reject({
+							status: 404,
+							msg: `User does not exist`,
+						});
+					}
+					return rows;
+				})
+				.then(() => {
+					return db.query(
 						`INSERT INTO comments (body, author, review_id)
 						VALUES ($1, $2, $3)
 						RETURNING *;`,
@@ -84,35 +125,3 @@ exports.updateReview = (review_id, patchUpdates) => {
 				.then(({ rows }) => rows[0]);
 		});
 };
-
-
-exports.newComment = (review_id, commentObj) => {
-	const { body, author } = commentObj;
-	console.log(commentObj);
-	if (!body || !author)
-		return Promise.reject({
-			status: 400,
-			msg: "Body and author name mus be valid!",
-		});
-	return db
-		.query(`SELECT * FROM users where username = $1`, [author])
-
-		.then(({ rows }) => {
-			if (!rows.length) {
-				return Promise.reject({
-					status: 404,
-					msg: `Bad request!`,
-				});
-			}
-			return rows;
-		})
-		.then(() => {
-			return db.query(
-				`UPDATE reviews
-									SET votes = votes + $1
-									WHERE review_id =$2
-									 RETURNING *`,
-				[inc_votes, review_id]
-			);
-		})
-		.then(({ rows }) => rows[0]);

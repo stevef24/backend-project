@@ -28,12 +28,11 @@ app.patch("/api/reviews/:review_id", patchReview);
 
 app.post("/api/reviews/:review_id/comments", postComments);
 
-app.use(errorPSQLHandler);
-app.use(handleCustomErrors);
-app.use(error500Handler);
-
 app.all("*", (req, res, next) => {
 	res.status(404).send({ msg: "Path not found" });
 });
+app.use(errorPSQLHandler);
+app.use(handleCustomErrors);
+app.use(error500Handler);
 
 module.exports = app;

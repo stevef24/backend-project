@@ -158,6 +158,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
 			.send(data)
 			.expect(404)
 			.then(({ body }) => {
+				console.log(body, "fixing this");
 				expect(body.err).toBe("No review found for review_id: 5000");
 			});
 	});
@@ -218,7 +219,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
 			.expect(400)
 			.then(({ body }) => {
 				console.log(body);
-				expect(body.err).toBe("Body and author name mus be valid!");
+				expect(body.err).toBe("Body and author name must be valid!");
 			});
 	});
 });
@@ -263,7 +264,7 @@ describe("PATCH /api/reviews/:review_id", () => {
 				expect(body.msg).toBe("Bad request");
 			});
 	});
-	it("should return a 404 if the review does not exist ", () => {
+	it.only("should return a 404 if the review does not exist ", () => {
 		const updatedData = { inc_votes: 5 };
 		return request(app)
 			.patch("/api/reviews/999999")
