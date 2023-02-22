@@ -151,7 +151,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
 				});
 			});
 	});
-	it("400 error if given the correct path but the review does not exist", () => {
+	it("404 error if given the correct path but the review does not exist", () => {
 		const data = {
 			body: "hello world this is my code ",
 			author: "mallionaire",
