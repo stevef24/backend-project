@@ -127,34 +127,98 @@ describe("GET /api/reviews/:review_id", () => {
 	});
 });
 
-describe(`GET /api/reviews/:review_id/comments`, () => {
-	it("return a 200 request and the data in the correct order ", () => {
+describe("POST /api/reviews/:review_id/comments", () => {
+	it("should return 201 and the posted data", () => {
+		const data = {
+			body: "hello world this is my code ",
+			author: "mallionaire",
+		};
 		return request(app)
-			.get("/api/reviews/2/comments")
-			.expect(200)
+			.post("/api/reviews/2/comments")
+			.send(data)
+			.expect(201)
 			.then(({ body }) => {
-				const comments = body.comments;
-				expect(comments).toHaveLength(3);
-				comments.forEach((comment) => {
-					expect(comment).toHaveProperty("comment_id", expect.any(Number));
-					expect(comment).toHaveProperty("body", expect.any(String));
-					expect(comment).toHaveProperty("review_id", expect.any(Number));
-					expect(comment).toHaveProperty("author", expect.any(String));
-					expect(comment).toHaveProperty("votes", expect.any(Number));
-					expect(comment).toHaveProperty("created_at", expect.any(String));
+				expect(body.comments).toMatchObject({
+					comment_id: expect.any(Number),
+					body: "hello world this is my code ",
+					review_id: 2,
+					author: "mallionaire",
+					votes: 0,
+					created_at: expect.any(String),
 				});
-				expect(comments).toBeSortedBy("created_at", { descending: true });
 			});
 	});
-	it("404 Error if given the wrong path", () => {
-		return request(app).get("/api/banana/:review_id/comments").expect(404);
-	});
-	it("should responds with 400 for a non id string eg get /api/reviews/hello/comments ", () => {
+	it("404 error if given the correct path but the review does not exist", () => {
+		const data = {
+			body: "hello world this is my code ",
+			author: "mallionaire",
+		};
 		return request(app)
-			.get("/api/reviews/hello/comments")
+			.post("/api/reviews/5000/comments")
+			.send(data)
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.err).toBe("No review found for review_id: 5000");
+			});
+	});
+	it("get 400 bad request if the incorrect path has bee given ", () => {
+		const data = {
+			body: "hello world this is my code ",
+			author: "mallionaire",
+		};
+		return request(app)
+			.post("/api/reviews/hello/comments")
+			.send(data)
 			.expect(400)
 			.then(({ body }) => {
 				expect(body.msg).toBe("Bad request");
+			});
+	});
+	it("should respond with a 201 to check a new item has been created ignoring extra properties", () => {
+		const data = {
+			body: "hello world this is my code ",
+			author: "mallionaire",
+			votes: 5000,
+		};
+		return request(app)
+			.post("/api/reviews/2/comments")
+			.send(data)
+			.expect(201)
+			.then(({ body }) => {
+				expect(body.comments).toMatchObject({
+					comment_id: expect.any(Number),
+					body: "hello world this is my code ",
+					review_id: 2,
+					author: "mallionaire",
+					votes: 0,
+					created_at: expect.any(String),
+				});
+			});
+	});
+	it("404 if the username does not exist ", () => {
+		const data = {
+			body: "hello world this is my code ",
+			author: "stav123",
+		};
+		return request(app)
+			.post("/api/reviews/2/comments")
+			.send(data)
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.err).toBe("User does not exist");
+			});
+	});
+	it("400 for missing required field/s for example there is no username or body properties. ", () => {
+		const data = {
+			body: "hello world this is my code ",
+		};
+		return request(app)
+			.post("/api/reviews/2/comments")
+			.send(data)
+			.expect(400)
+			.then(({ body }) => {
+				console.log(body);
+				expect(body.err).toBe("Body and author name mus be valid!");
 			});
 	});
 });

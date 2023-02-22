@@ -8,6 +8,9 @@ exports.errorPSQLHandler = (err, req, res, next) => {
 };
 
 exports.handleCustomErrors = (err, req, res, next) => {
+	if (err.status === 400) {
+		res.status(400).send({ err: err.msg });
+	}
 	if (err.status && err.msg) {
 		res.status(404).send({ err: err.msg });
 	} else {
@@ -16,6 +19,5 @@ exports.handleCustomErrors = (err, req, res, next) => {
 };
 
 exports.error500Handler = (err, req, res, next) => {
-	console.log(err);
 	res.status(500).send({ msg: "Internal server error" });
 };
