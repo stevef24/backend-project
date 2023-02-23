@@ -1,15 +1,33 @@
 const db = require("../db/connection");
 
-exports.fetchReviews = () => {
-	return db
-		.query(
-			`SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.review_id) AS comment_count
-  FROM reviews
-  LEFT JOIN comments ON reviews.review_id = comments.review_id
-  GROUP BY reviews.review_id
-  ORDER BY reviews.created_at DESC;`
-		)
-		.then(({ rows }) => rows);
+exports.fetchReviews = (sort_by = "created_at", order, category = null) => {
+	const paramsArr = [];
+	let defaultQuery = `SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.review_id) AS comment_count
+	FROM reviews
+	LEFT JOIN comments ON reviews.review_id = comments.review_id`;
+	if (category) {
+		defaultQuery += ` WHERE category = $1
+		GROUP BY reviews.review_id`;
+		paramsArr.push(category);
+	} else {
+		defaultQuery += ` GROUP BY reviews.review_id`;
+	}
+	if (order) {
+		defaultQuery += ` ORDER BY created_at ${order}`;
+	} else if (sort_by) {
+		defaultQuery += ` ORDER BY ${sort_by} DESC`;
+	}
+
+	return db.query(defaultQuery, paramsArr).then(({ rows }) => {
+		console.log(rows);
+		if (!rows.length) {
+			return Promise.reject({
+				status: 400,
+				msg: "Bad request! invalid input",
+			});
+		}
+		return rows;
+	});
 };
 
 exports.fetchComments = (review_id) => {
