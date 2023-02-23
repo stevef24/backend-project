@@ -180,3 +180,7 @@ exports.newComment = (review_id, commentObj) => {
 				.then(({ rows }) => rows[0]);
 		});
 };
+
+exports.fetchUsers = () => {
+	return db.query(`SELECT * FROM USERS`).then(({ rows }) => rows);
+};
