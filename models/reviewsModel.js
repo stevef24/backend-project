@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const reviews = require("../db/data/test-data/reviews");
 
 exports.fetchReviews = () => {
 	return db
@@ -14,7 +15,21 @@ exports.fetchReviews = () => {
 
 exports.fetchComments = (review_id) => {
 	return db
-		.query(`SELECT * FROM reviews WHERE review_id=$1 `, [review_id])
+		.query(
+			`ALTER TABLE reviews 
+			ADD COLUMN comment_count INT;`
+		)
+		.then(() => {
+			return db.query(`UPDATE reviews 
+			SET comment_count = (
+				SELECT COUNT(*) FROM comments  WHERE comments.review_id = reviews.review_id
+			)`);
+		})
+		.then(() => {
+			return db.query(`SELECT * FROM reviews where review_id = $1`, [
+				review_id,
+			]);
+		})
 		.then(({ rows }) => {
 			if (!rows.length) {
 				return Promise.reject({
