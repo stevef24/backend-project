@@ -184,3 +184,17 @@ exports.newComment = (review_id, commentObj) => {
 exports.fetchUsers = () => {
 	return db.query(`SELECT * FROM USERS`).then(({ rows }) => rows);
 };
+
+exports.removeComment = (comment_id) => {
+	return db
+		.query(`DELETE FROM comments WHERE comment_id=$1 returning *`, [comment_id])
+		.then(({ rows }) => {
+			if (!rows.length) {
+				return Promise.reject({
+					status: 404,
+					msg: `comment does not exist`,
+				});
+			}
+			return rows;
+		});
+};

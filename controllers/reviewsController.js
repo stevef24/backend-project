@@ -5,6 +5,7 @@ const {
 	updateReview,
 	newComment,
 	fetchUsers,
+	removeComment,
 } = require("../models/reviewsModel");
 
 exports.getReviews = (req, res, next) => {
@@ -60,4 +61,16 @@ exports.getUsers = (req, res, next) => {
 	fetchUsers().then((data) => {
 		res.status(200).send({ users: data });
 	});
+};
+
+exports.deleteComment = (req, res, next) => {
+	const { comment_id } = req.params;
+	console.log(comment_id);
+	removeComment(comment_id)
+		.then(() => {
+			res.status(204).send("No content");
+		})
+		.catch((err) => {
+			next(err);
+		});
 };

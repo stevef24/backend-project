@@ -410,3 +410,17 @@ describe("GET /api/users", () => {
 		return request(app).get("/api/usersss").expect(404);
 	});
 });
+
+describe.only(`DELETE /api/comments/:comment_id`, () => {
+	it("delete the given comment by comment_id and respond with 204", () => {
+		return request(app).delete("/api/comments/2").expect(204);
+	});
+	it("returns 404 if the comment deleted doesn't exist ", () => {
+		return request(app)
+			.delete("/api/comments/10000")
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.err).toBe(`comment does not exist`);
+			});
+	});
+});
