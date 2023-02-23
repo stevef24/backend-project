@@ -83,6 +83,15 @@ describe("GET /api/reviews", () => {
 	it("404 err if the url path is correct but the user doesn't exist ", () => {
 		return request(app).get("/api/10000").expect(404);
 	});
+	describe("GET /api/reviews (queries)", () => {
+		it("return 200 with the reviews sorted by date ", () => {
+			return request(app)
+				.get("/api/reviews?sort_by=date")
+				.then(({ body }) => {
+					console.log(body);
+				});
+		});
+	});
 });
 
 describe("GET /api/reviews/:review_id", () => {

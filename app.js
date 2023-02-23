@@ -7,6 +7,7 @@ const {
 	getReviewsById,
 	patchReview,
 	postComments,
+	getQueries,
 } = require("./controllers/reviewsController");
 
 const {
@@ -19,7 +20,7 @@ app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
-app.get("/api/reviews", getReviews);
+app.get("/api/reviews/", getReviews);
 
 app.get("/api/reviews/:review_id/comments", getAllComments);
 
