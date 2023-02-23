@@ -92,7 +92,6 @@ describe("GET /api/reviews/:review_id", () => {
 			.expect(200)
 			.then(({ body }) => {
 				const review = body.review;
-				console.log(review, "<========= this is what i am getting ");
 				expect(review.length).toBe(1);
 				const reviewObj = body.review[0];
 				expect(reviewObj).toHaveProperty("review_id", 2);
@@ -113,7 +112,7 @@ describe("GET /api/reviews/:review_id", () => {
 					"2021-01-18T10:01:41.251Z"
 				);
 				expect(reviewObj).toHaveProperty("votes", 5);
-				// expect(reviewObj).toHaveProperty("comment_count", expect.any(Number));
+				expect(reviewObj).toHaveProperty("comment_count", "3");
 			});
 	});
 	it("404 error if the ID is invalid", () => {
