@@ -83,13 +83,12 @@ describe("GET /api/reviews", () => {
 	it("404 err if the url path is correct but the user doesn't exist ", () => {
 		return request(app).get("/api/10000").expect(404);
 	});
-	describe.only("GET /api/reviews (queries)", () => {
+	describe("GET /api/reviews (queries)", () => {
 		it("return 200 with the reviews sorted by designer", () => {
 			return request(app)
 				.get("/api/reviews?sort_by=created_at")
 				.expect(200)
 				.then(({ body }) => {
-					console.log(body);
 					const reviews = body.reviews;
 					expect(reviews).toBeSortedBy("created_at", { descending: true });
 					reviews.forEach((review) => {
