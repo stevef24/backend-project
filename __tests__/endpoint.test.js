@@ -86,11 +86,11 @@ describe("GET /api/reviews", () => {
 	describe("GET /api/reviews (queries)", () => {
 		it("return 200 with the reviews sorted by designer", () => {
 			return request(app)
-				.get("/api/reviews?sort_by=created_at")
+				.get("/api/reviews?sort_by=designer")
 				.expect(200)
 				.then(({ body }) => {
 					const reviews = body.reviews;
-					expect(reviews).toBeSortedBy("created_at", { descending: true });
+					expect(reviews).toBeSortedBy("designer", { descending: true });
 					reviews.forEach((review) => {
 						expect(review).toHaveProperty("owner", expect.any(String));
 						expect(review).toHaveProperty("title", expect.any(String));
@@ -104,13 +104,21 @@ describe("GET /api/reviews", () => {
 					});
 				});
 		});
-		it("return 200 with the reviews order in descending order ", () => {
+		it("return 400  when order isn't valid ie orders = hithere ", () => {
+			return request(app)
+				.get("/api/reviews?order=hithere")
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.err).toBe("Bad request! invalid order parameter!");
+				});
+		});
+		it("return 200 with the reviews order in ascending order ", () => {
 			return request(app)
 				.get("/api/reviews?order=asc")
 				.expect(200)
 				.then(({ body }) => {
 					const reviews = body.reviews;
-					expect(reviews).toBeSortedBy("", { ascending: true });
+					expect(reviews).toBeSortedBy("created_at", { ascending: true });
 					reviews.forEach((review) => {
 						expect(review).toHaveProperty("owner", expect.any(String));
 						expect(review).toHaveProperty("title", expect.any(String));
@@ -144,16 +152,18 @@ describe("GET /api/reviews", () => {
 					});
 				});
 		});
-		it("return a 400 Not found when given an correct path with incorrect field ie category = hello ", () => {
-			return request(app).get("/api/reviewsbananas").expect(404);
-		});
-		it("return 400 with the reviews categorised by dexterity ", () => {
+		it("return a 400 Not found when given an correct path with incorrect field ie category = hello  ", () => {
 			return request(app)
 				.get("/api/reviews?category=hello")
 				.expect(400)
 				.then(({ body }) => {
-					expect(body.err).toBe("Bad request! invalid input");
+					expect(body.err).toBe("Bad request! invalid category");
 				});
+		});
+		it(" 200 response for a valid category with no reviews yet", () => {
+			return request(app)
+				.get("/api/reviews?category=children's%20games")
+				.expect(200);
 		});
 	});
 });
