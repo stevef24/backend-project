@@ -308,3 +308,22 @@ describe("PATCH /api/reviews/:review_id", () => {
 			});
 	});
 });
+
+describe("GET /api/users", () => {
+	it("respond with a 200 and contain all the data with the right property ", () => {
+		return request(app)
+			.get("/api/users")
+			.expect(200)
+			.then(({ body }) => {
+				const users = body.users;
+				users.forEach((user) => {
+					expect(user).toHaveProperty("username", expect.any(String));
+					expect(user).toHaveProperty("name", expect.any(String));
+					expect(user).toHaveProperty("avatar_url", expect.any(String));
+				});
+			});
+	});
+	it("respond with a 404 if given wrong path", () => {
+		return request(app).get("/api/usersss").expect(404);
+	});
+});
