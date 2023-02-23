@@ -83,6 +83,89 @@ describe("GET /api/reviews", () => {
 	it("404 err if the url path is correct but the user doesn't exist ", () => {
 		return request(app).get("/api/10000").expect(404);
 	});
+	describe("GET /api/reviews (queries)", () => {
+		it("return 200 with the reviews sorted by designer", () => {
+			return request(app)
+				.get("/api/reviews?sort_by=designer")
+				.expect(200)
+				.then(({ body }) => {
+					const reviews = body.reviews;
+					expect(reviews).toBeSortedBy("designer", { descending: true });
+					reviews.forEach((review) => {
+						expect(review).toHaveProperty("owner", expect.any(String));
+						expect(review).toHaveProperty("title", expect.any(String));
+						expect(review).toHaveProperty("review_id", expect.any(Number));
+						expect(review).toHaveProperty("category", expect.any(String));
+						expect(review).toHaveProperty("review_img_url", expect.any(String));
+						expect(review).toHaveProperty("created_at", expect.any(String));
+						expect(review).toHaveProperty("designer", expect.any(String));
+						expect(review).toHaveProperty("votes", expect.any(Number));
+						expect(review).toHaveProperty("comment_count", expect.any(String));
+					});
+				});
+		});
+		it("return 400  when order isn't valid ie orders = hithere ", () => {
+			return request(app)
+				.get("/api/reviews?order=hithere")
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.err).toBe("Bad request! invalid order parameter!");
+				});
+		});
+		it("return 200 with the reviews order in ascending order ", () => {
+			return request(app)
+				.get("/api/reviews?order=asc")
+				.expect(200)
+				.then(({ body }) => {
+					const reviews = body.reviews;
+					expect(reviews).toBeSortedBy("created_at", { ascending: true });
+					reviews.forEach((review) => {
+						expect(review).toHaveProperty("owner", expect.any(String));
+						expect(review).toHaveProperty("title", expect.any(String));
+						expect(review).toHaveProperty("review_id", expect.any(Number));
+						expect(review).toHaveProperty("category", expect.any(String));
+						expect(review).toHaveProperty("review_img_url", expect.any(String));
+						expect(review).toHaveProperty("created_at", expect.any(String));
+						expect(review).toHaveProperty("designer", expect.any(String));
+						expect(review).toHaveProperty("votes", expect.any(Number));
+						expect(review).toHaveProperty("comment_count", expect.any(String));
+					});
+				});
+		});
+		it("return 200 with the reviews categorised by dexterity ", () => {
+			return request(app)
+				.get("/api/reviews?category=dexterity")
+				.expect(200)
+				.then(({ body }) => {
+					const reviews = body.reviews;
+					expect(reviews).toBeSortedBy("category", { ascending: true });
+					reviews.forEach((review) => {
+						expect(review).toHaveProperty("owner", expect.any(String));
+						expect(review).toHaveProperty("title", expect.any(String));
+						expect(review).toHaveProperty("review_id", expect.any(Number));
+						expect(review).toHaveProperty("category", "dexterity");
+						expect(review).toHaveProperty("review_img_url", expect.any(String));
+						expect(review).toHaveProperty("created_at", expect.any(String));
+						expect(review).toHaveProperty("designer", expect.any(String));
+						expect(review).toHaveProperty("votes", expect.any(Number));
+						expect(review).toHaveProperty("comment_count", expect.any(String));
+					});
+				});
+		});
+		it("return a 400 Not found when given an correct path with incorrect field ie category = hello  ", () => {
+			return request(app)
+				.get("/api/reviews?category=hello")
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.err).toBe("Bad request! invalid category");
+				});
+		});
+		it(" 200 response for a valid category with no reviews yet", () => {
+			return request(app)
+				.get("/api/reviews?category=children's%20games")
+				.expect(200);
+		});
+	});
 });
 
 describe("GET /api/reviews/:review_id", () => {

@@ -1,15 +1,70 @@
 const db = require("../db/connection");
 
-exports.fetchReviews = () => {
-	return db
-		.query(
-			`SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.review_id) AS comment_count
-  FROM reviews
-  LEFT JOIN comments ON reviews.review_id = comments.review_id
-  GROUP BY reviews.review_id
-  ORDER BY reviews.created_at DESC;`
-		)
-		.then(({ rows }) => rows);
+exports.fetchReviews = (sort_by = "created_at", order, category) => {
+	console.log(order);
+	const paramsArr = [];
+	const validCategories = [
+		"euro game",
+		"social deduction",
+		"dexterity",
+		`children's games`,
+	];
+	const validOrderArr = ["asc", "desc", undefined];
+	const validSortBy = [
+		"title",
+		"designer",
+		"owner",
+		"review_img_url",
+		"review_body",
+		"category",
+		"created_at",
+		"votes",
+		undefined,
+	];
+	const validCategory = validCategories.includes(category) ? true : false;
+	const validOrder = validOrderArr.includes(order) ? true : false;
+	const validSort = validSortBy.includes(sort_by) ? true : false;
+
+	if (!validOrder) {
+		return Promise.reject({
+			status: 400,
+			msg: "Bad request! invalid order parameter!",
+		});
+	}
+
+	if (!validSort) {
+		return Promise.reject({
+			status: 400,
+			msg: "Bad request! invalid sort parameter!",
+		});
+	}
+
+	let defaultQuery = `SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.review_id) AS comment_count
+	FROM reviews
+	LEFT JOIN comments ON reviews.review_id = comments.review_id`;
+	if (category) {
+		defaultQuery += ` WHERE category = $1
+		GROUP BY reviews.review_id`;
+		paramsArr.push(category);
+	} else {
+		defaultQuery += ` GROUP BY reviews.review_id`;
+	}
+	if (order) {
+		defaultQuery += ` ORDER BY created_at ${order}`;
+	} else if (sort_by) {
+		defaultQuery += ` ORDER BY ${sort_by} DESC`;
+	}
+
+	return db.query(defaultQuery, paramsArr).then(({ rows }) => {
+		if (!rows.length && !validCategory) {
+			return Promise.reject({
+				status: 400,
+				msg: "Bad request! invalid category",
+			});
+		}
+
+		return rows;
+	});
 };
 
 exports.fetchComments = (review_id) => {

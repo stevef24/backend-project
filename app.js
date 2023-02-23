@@ -7,6 +7,7 @@ const {
 	getReviewsById,
 	patchReview,
 	postComments,
+	getQueries,
 	getUsers,
 } = require("./controllers/reviewsController");
 
@@ -20,7 +21,7 @@ app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
-app.get("/api/reviews", getReviews);
+app.get("/api/reviews/", getReviews);
 
 app.get("/api/reviews/:review_id/comments", getAllComments);
 
@@ -30,11 +31,11 @@ app.patch("/api/reviews/:review_id", patchReview);
 app.post("/api/reviews/:review_id/comments", postComments);
 app.get("/api/users", getUsers);
 
-app.all("*", (req, res, next) => {
-	res.status(404).send({ msg: "Path not found" });
-});
 app.use(errorPSQLHandler);
 app.use(handleCustomErrors);
 app.use(error500Handler);
+app.all("*", (req, res, next) => {
+	res.status(404).send({ msg: "Path not found" });
+});
 
 module.exports = app;
