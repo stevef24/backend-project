@@ -3,6 +3,7 @@ const db = require("../db/connection");
 const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
+const endPoints = require("../endpoints");
 
 beforeEach(() => {
 	return seed(testData);
@@ -412,7 +413,7 @@ describe("GET /api/users", () => {
 	});
 });
 
-describe.only(`DELETE /api/comments/:comment_id`, () => {
+describe(`DELETE /api/comments/:comment_id`, () => {
 	it("delete the given comment by comment_id and respond with 204", () => {
 		return request(app).delete("/api/comments/2").expect(204);
 	});
@@ -430,6 +431,18 @@ describe.only(`DELETE /api/comments/:comment_id`, () => {
 			.expect(400)
 			.then(({ body }) => {
 				expect(body.msg).toBe(`Bad request`);
+			});
+	});
+});
+
+describe("GET /api", () => {
+	it("responds with 200 and JSON describing all the available endpoints in this API ", () => {
+		return request(app)
+			.get("/api")
+			.expect(200)
+			.then(({ body }) => {
+				console.log(endPoints);
+				expect(body.apiEndPoints).toEqual(endPoints);
 			});
 	});
 });

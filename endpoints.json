@@ -1,34 +1,72 @@
 {
-  "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
-  },
-  "GET /api/categories": {
-    "description": "serves an array of all categories",
-    "queries": [],
-    "exampleResponse": {
-      "categories": [
-        {
-          "description": "Players attempt to uncover each other's hidden role",
-          "slug": "Social deduction"
-        }
-      ]
-    }
-  },
-  "GET /api/reviews": {
-    "description": "serves an array of all reviews",
-    "queries": ["category", "sort_by", "order"],
-    "exampleResponse": {
-      "reviews": [
-        {
-          "title": "One Night Ultimate Werewolf",
-          "designer": "Akihisa Okui",
-          "owner": "happyamy2016",
-          "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-          "category": "hidden-roles",
-          "created_at": 1610964101251,
-          "votes": 5
-        }
-      ]
-    }
-  }
+	"GET /api": {
+		"description": "serves up a json representation of all the available endpoints of the api"
+	},
+	"GET /api/categories": {
+		"description": "serves an array of all categories",
+		"queries": [],
+		"exampleResponse": {
+			"categories": [
+				{
+					"description": "Players attempt to uncover each other's hidden role",
+					"slug": "Social deduction"
+				}
+			]
+		}
+	},
+	"GET /api/reviews": {
+		"description": "serves an array of all reviews",
+		"queries": ["category", "sort_by", "order"],
+		"exampleResponse": {
+			"reviews": [
+				{
+					"title": "One Night Ultimate Werewolf",
+					"designer": "Akihisa Okui",
+					"owner": "happyamy2016",
+					"review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+					"category": "hidden-roles",
+					"created_at": 1610964101251,
+					"votes": 5
+				}
+			]
+		}
+	},
+	"GET /api/reviews/:review_id/comments": {
+		"description": "serves an array of all comments from a specific review id",
+		"queries": [],
+		"exampleResponse": {
+			"comments": []
+		}
+	},
+	"GET /api/reviews/:review_id": {
+		"description": "serves an array of all reviews from a specific review id",
+		"queries": [],
+		"exampleResponse": {
+			"reviews": []
+		}
+	},
+	"PATCH /api/reviews/:review_id": {
+		"description": "updates votes specific review takes an ID and body ",
+		"queries": [],
+		"exampleResponse": {
+			"reviews": []
+		}
+	},
+	"POST /api/reviews/:review_id/comments": {
+		"description": "creates a new comment for the a particular review ",
+		"queries": [],
+		"exampleResponse": {
+			"reviews": []
+		}
+	},
+	"GET /api/users": {
+		"description": "Serves an array of a list of users",
+		"queries": [],
+		"exampleResponse": {
+			"reviews": []
+		}
+	},
+	"DELETE /api/comments/:comment_id": {
+		"description": "Deletes a unique comment and has no response "
+	}
 }

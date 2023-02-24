@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const { getCategories } = require("./controllers/categoriesControllers");
+const endpoints = require("./endpoints.json");
 const {
 	getReviews,
 	getAllComments,
@@ -16,9 +17,10 @@ const {
 	handleCustomErrors,
 	error500Handler,
 } = require("./controllers/errorHandeling");
-
+app.get("/api", (req, res, next) => {
+	res.status(200).send({ apiEndPoints: endpoints });
+});
 app.use(express.json());
-
 app.get("/api/categories", getCategories);
 
 app.get("/api/reviews/", getReviews);

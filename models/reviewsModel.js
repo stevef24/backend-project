@@ -1,8 +1,6 @@
 const db = require("../db/connection");
-const reviews = require("../db/data/test-data/reviews");
 
 exports.fetchReviews = (sort_by = "created_at", order, category) => {
-	console.log(order);
 	const paramsArr = [];
 	const validCategories = [
 		"euro game",
