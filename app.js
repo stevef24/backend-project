@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-
 const endpoints = require("./endpoints.json");
 const reviewRouter = require("./routes/reviewsRoute");
 const commentsRouter = require("./routes/commentsRoute");
