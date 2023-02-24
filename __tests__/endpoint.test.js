@@ -445,3 +445,25 @@ describe("GET /api", () => {
 			});
 	});
 });
+
+describe.only("GET /api/users/:username", () => {
+	it("respond with a 200 and return user object with the correct data", () => {
+		return request(app)
+			.get("/api/users/mallionaire")
+			.expect(200)
+			.then(({ body }) => {
+				const user = body.user;
+				expect(user).toHaveProperty("username");
+				expect(user).toHaveProperty("avatar_url");
+				expect(user).toHaveProperty("name");
+			});
+	});
+	it("400 if given the correct path but has wrong input ie username =1", () => {
+		return request(app)
+			.get("/api/users/1")
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.err).toBe(`Bad request`);
+			});
+	});
+});

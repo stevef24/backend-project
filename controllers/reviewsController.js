@@ -4,7 +4,6 @@ const {
 	fetchReviewsById,
 	updateReview,
 	newComment,
-	fetchUsers,
 	removeComment,
 } = require("../models/reviewsModel");
 
@@ -53,14 +52,6 @@ exports.patchReview = (req, res, next) => {
 	updateReview(review_id, updates)
 		.then((data) => {
 			res.status(200).send({ review: data });
-		})
-		.catch((err) => next(err));
-};
-
-exports.getUsers = (req, res, next) => {
-	fetchUsers()
-		.then((data) => {
-			res.status(200).send({ users: data });
 		})
 		.catch((err) => next(err));
 };
