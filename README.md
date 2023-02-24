@@ -2,16 +2,17 @@ Project summary:
 
 Based on the provided endpoints, this API serves as a backend for a game review website. Here's a summary of what each endpoint does:
 
-GET /api: Serves up a JSON representation of all the available endpoints of the API.
-GET /api/categories: Serves an array of all categories.
-GET /api/reviews: Serves an array of all reviews, with optional query parameters to filter and sort the results.
-GET /api/reviews/:review_id/comments: Serves an array of all comments from a specific review ID.
-GET /api/reviews/:review_id: Serves an array of all reviews from a specific review ID.
-PATCH /api/reviews/:review_id: Updates the vote count for a specific review.
-POST /api/reviews/:review_id/comments: Creates a new comment for a specific review.
-GET /api/users: Serves an array of all users.
-DELETE /api/comments/:comment_id: Deletes a unique comment based on its ID.
-Overall, this API provides functionality to retrieve, create, update, and delete reviews, comments, and categories, as well as user data. The endpoints that serve reviews and comments also support filtering and sorting by category, vote count, and other parameters.
+1. GET /api: Serves up a JSON representation of all the available endpoints of the API.
+2. GET /api/categories: Serves an array of all categories.
+3. GET /api/reviews: Serves an array of all reviews, with optional query parameters to filter and sort the results.
+4. GET /api/reviews/:review_id/comments: Serves an array of all comments from a specific review ID.
+5. GET /api/reviews/:review_id: Serves an array of all reviews from a specific review ID.
+6. PATCH /api/reviews/:review_id: Updates the vote count for a specific review.1.
+7. POST /api/reviews/:review_id/comments: Creates a new comment for a specific review.
+8. GET /api/users: Serves an array of all users.
+9. DELETE /api/comments/:comment_id: Deletes a unique comment based on its ID.
+
+   Overall, this API provides functionality to retrieve, create, update, and delete reviews, comments, and categories, as well as user data. The endpoints that serve reviews and comments also support filtering and sorting by category, vote count, and other parameters.
 
 ---
 
