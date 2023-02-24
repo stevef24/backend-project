@@ -1,8 +1,7 @@
 const express = require("express");
 const app = express();
-const { getCategories } = require("./controllers/categoriesControllers");
+
 const endpoints = require("./endpoints.json");
-const { getUsers, deleteComment } = require("./controllers/reviewsController");
 const reviewRouter = require("./routes/reviewsRoute");
 const commentsRouter = require("./routes/commentsRoute");
 const userRouter = require("./routes/userRoute");
@@ -21,8 +20,8 @@ app.get("/api", (req, res, next) => {
 app.use(express.json());
 app.use("/api/reviews", reviewRouter);
 app.use("/api/comments", commentsRouter);
-app.get("/api/categories", getCategories);
-app.get("/api/users", getUsers);
+app.use("/api/categories", categoryRouter);
+app.use("/api/users", userRouter);
 
 app.use(errorPSQLHandler);
 app.use(handleCustomErrors);
