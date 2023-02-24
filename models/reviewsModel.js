@@ -66,17 +66,6 @@ exports.fetchReviews = (sort_by = "created_at", order, category) => {
 	});
 };
 
-exports.fetchComments = (review_id) => {
-	return db
-		.query(
-			`SELECT * FROM comments 
-			WHERE review_id = $1 
-			ORDER BY created_at desc;`,
-			[review_id]
-		)
-		.then(({ rows }) => rows);
-};
-
 exports.fetchReviewsById = (reviewId) => {
 	return db
 		.query(

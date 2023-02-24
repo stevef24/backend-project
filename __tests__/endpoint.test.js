@@ -357,7 +357,7 @@ describe("PATCH /api/reviews/:review_id", () => {
 				expect(body.err).toBe("Bad request!");
 			});
 	});
-	it("should return a 201 response when changes are made but it ignores other property ", () => {
+	it("should return a 200 response when changes are made but it ignores other property ", () => {
 		const updatedData = { inc_votes: 5, title: "hello world" };
 		return request(app)
 			.patch("/api/reviews/2")
@@ -446,7 +446,7 @@ describe("GET /api", () => {
 	});
 });
 
-describe.only("GET /api/users/:username", () => {
+describe("GET /api/users/:username", () => {
 	it("respond with a 200 and return user object with the correct data", () => {
 		return request(app)
 			.get("/api/users/mallionaire")
@@ -467,3 +467,49 @@ describe.only("GET /api/users/:username", () => {
 			});
 	});
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+	it("should return a 200 with the updated votes property, ignoring all other properties ", () => {
+		const updateVotes = { inc_votes: 5 };
+		return request(app)
+			.patch("/api/comments/2")
+			.send(updateVotes)
+			.expect(200)
+			.then(({ body }) => {
+				expect(body.comment).toHaveProperty("comment_id", 2);
+				expect(body.comment).toHaveProperty(
+					"body",
+					"My dog loved this game too!"
+				);
+				expect(body.comment).toHaveProperty("author", "mallionaire");
+				expect(body.comment).toHaveProperty("votes", 18);
+				expect(body.comment).toHaveProperty(
+					"created_at",
+					"2021-01-18T10:09:05.410Z"
+				);
+			});
+	});
+	it("return a 400 Bad Request if the path given is correct but the input is invalid ie /api/comments/banana", () => {
+		const updateVotes = { inc_votes: 5 };
+		return request(app)
+			.patch("/api/comments/banana")
+			.send(updateVotes)
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe("Bad request");
+			});
+	});
+	it("return a 404 if the comment does not exist ie comment id = 101010", () => {
+		const updateVotes = { inc_votes: 5 };
+		return request(app)
+			.patch("/api/comments/101010")
+			.send(updateVotes)
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.err).toBe("comment does not exist!");
+			});
+	});
+});
+
+//400
+//404

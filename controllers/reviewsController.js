@@ -1,6 +1,5 @@
 const {
 	fetchReviews,
-	fetchComments,
 	fetchReviewsById,
 	updateReview,
 	newComment,
@@ -35,15 +34,6 @@ exports.postComments = (req, res, next) => {
 		.catch((err) => {
 			next(err);
 		});
-};
-
-exports.getAllComments = (req, res, next) => {
-	const { review_id } = req.params;
-	fetchComments(review_id)
-		.then((data) => {
-			res.status(200).send({ comments: data });
-		})
-		.catch((err) => next(err));
 };
 
 exports.patchReview = (req, res, next) => {
