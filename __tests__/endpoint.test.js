@@ -423,4 +423,12 @@ describe.only(`DELETE /api/comments/:comment_id`, () => {
 				expect(body.err).toBe(`comment does not exist`);
 			});
 	});
+	it("returns 400 if the comment path is correct but has invalid inout ie id = banana ", () => {
+		return request(app)
+			.delete("/api/comments/banana")
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe(`Bad request`);
+			});
+	});
 });
