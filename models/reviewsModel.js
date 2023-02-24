@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const reviews = require("../db/data/test-data/reviews");
 
 exports.fetchReviews = (sort_by = "created_at", order, category) => {
 	console.log(order);
@@ -69,38 +70,33 @@ exports.fetchReviews = (sort_by = "created_at", order, category) => {
 
 exports.fetchComments = (review_id) => {
 	return db
-		.query(`SELECT * FROM reviews WHERE review_id=$1 `, [review_id])
-		.then(({ rows }) => {
-			if (!rows.length) {
-				return Promise.reject({
-					status: 404,
-					msg: `Cannot find review ${review_id}`,
-				});
-			}
-			return db.query(
-				`SELECT * FROM comments 
+		.query(
+			`SELECT * FROM comments 
 			WHERE review_id = $1 
 			ORDER BY created_at desc;`,
-				[review_id]
-			);
-		})
+			[review_id]
+		)
 		.then(({ rows }) => rows);
 };
 
 exports.fetchReviewsById = (reviewId) => {
 	return db
 		.query(
-			`SELECT * FROM reviews 
-				WHERE review_id=$1;`,
+			`SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, reviews.review_img_url,reviews.review_body,reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.review_id) AS comment_count
+			FROM reviews
+			LEFT JOIN comments ON reviews.review_id = comments.review_id
+			WHERE reviews.review_id=$1
+			GROUP BY reviews.review_id`,
 			[reviewId]
 		)
 		.then(({ rows }) => {
-			return rows.length === 0
-				? Promise.reject({
-						status: 404,
-						msg: `No review found for review_id: ${reviewId}`,
-				  })
-				: rows;
+			if (!rows.length) {
+				return Promise.reject({
+					status: 404,
+					msg: `No review found for review_id: ${reviewId}`,
+				});
+			}
+			return rows;
 		});
 };
 

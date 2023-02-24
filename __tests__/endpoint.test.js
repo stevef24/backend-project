@@ -195,6 +195,7 @@ describe("GET /api/reviews/:review_id", () => {
 					"2021-01-18T10:01:41.251Z"
 				);
 				expect(reviewObj).toHaveProperty("votes", 5);
+				expect(reviewObj).toHaveProperty("comment_count", "3");
 			});
 	});
 	it("404 error if the ID is invalid", () => {
