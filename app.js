@@ -3,7 +3,11 @@ const app = express();
 const { getCategories } = require("./controllers/categoriesControllers");
 const endpoints = require("./endpoints.json");
 const { getUsers, deleteComment } = require("./controllers/reviewsController");
-const reviewRouter = require("./routes/reviewsRouter");
+const reviewRouter = require("./routes/reviewsRoute");
+const commentsRouter = require("./routes/commentsRoute");
+const userRouter = require("./routes/userRoute");
+const categoryRouter = require("./routes/categoryRoute");
+
 const {
 	errorPSQLHandler,
 	handleCustomErrors,
@@ -16,10 +20,9 @@ app.get("/api", (req, res, next) => {
 
 app.use(express.json());
 app.use("/api/reviews", reviewRouter);
+app.use("/api/comments", commentsRouter);
 app.get("/api/categories", getCategories);
 app.get("/api/users", getUsers);
-
-app.delete("/api/comments/:comment_id", deleteComment);
 
 app.use(errorPSQLHandler);
 app.use(handleCustomErrors);
