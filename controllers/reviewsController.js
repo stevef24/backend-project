@@ -62,9 +62,7 @@ exports.getUsers = (req, res, next) => {
 		.then((data) => {
 			res.status(200).send({ users: data });
 		})
-		.catch((err) => {
-			next(err);
-		});
+		.catch((err) => next(err));
 };
 
 exports.deleteComment = (req, res, next) => {
