@@ -2,16 +2,8 @@ const express = require("express");
 const app = express();
 const { getCategories } = require("./controllers/categoriesControllers");
 const endpoints = require("./endpoints.json");
-const {
-	getReviews,
-	getAllComments,
-	getReviewsById,
-	patchReview,
-	postComments,
-	getUsers,
-	deleteComment,
-} = require("./controllers/reviewsController");
-
+const { getUsers, deleteComment } = require("./controllers/reviewsController");
+const reviewRouter = require("./routes/reviewsRouter");
 const {
 	errorPSQLHandler,
 	handleCustomErrors,
@@ -23,16 +15,8 @@ app.get("/api", (req, res, next) => {
 });
 
 app.use(express.json());
+app.use("/api/reviews", reviewRouter);
 app.get("/api/categories", getCategories);
-
-app.get("/api/reviews/", getReviews);
-
-app.get("/api/reviews/:review_id/comments", getAllComments);
-
-app.get("/api/reviews/:review_id", getReviewsById);
-app.patch("/api/reviews/:review_id", patchReview);
-
-app.post("/api/reviews/:review_id/comments", postComments);
 app.get("/api/users", getUsers);
 
 app.delete("/api/comments/:comment_id", deleteComment);

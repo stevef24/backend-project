@@ -11,7 +11,7 @@ const config =
 				max: 2,
 		  }
 		: {};
-
+console.log(ENV);
 if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
 	throw new Error("PGDATABASE or DATABASE_URL not set");
 }
