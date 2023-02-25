@@ -553,7 +553,6 @@ describe("PATCH /api/comments/:comment_id", () => {
 	});
 });
 
-
 describe(`GET /api/reviews/:review_id/comments`, () => {
 	it("return a 200 request and the data in the correct order ", () => {
 		return request(app)
@@ -622,3 +621,50 @@ describe(`GET /api/reviews/:review_id/comments`, () => {
 	});
 });
 
+describe(`POST /api/categories`, () => {
+	it("should return a 201 created with the correct object details that were created", () => {
+		const newCategory = {
+			slug: "sports",
+			description:
+				"Sports gaming is a category of video games that simulate various sports and allow players to compete against each other or against computer-controlled opponents. These games typically feature realistic graphics, physics, and gameplay mechanics that aim to replicate the experience of playing a real sport",
+		};
+		return request(app)
+			.post("/api/categories")
+			.send(newCategory)
+			.expect(201)
+			.then(({ body }) => {
+				const category = body.category;
+				expect(category).toHaveProperty("slug", "sports");
+				expect(category).toHaveProperty(
+					"description",
+					"Sports gaming is a category of video games that simulate various sports and allow players to compete against each other or against computer-controlled opponents. These games typically feature realistic graphics, physics, and gameplay mechanics that aim to replicate the experience of playing a real sport"
+				);
+			});
+	});
+	it("should return a 400 if the user is trying to insert a category that already exists", () => {
+		const newCategory = {
+			slug: "euro game",
+			description: "Abstact games that involve little luck",
+		};
+		return request(app)
+			.post("/api/categories")
+			.send(newCategory)
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.err).toBe("The category already exists!");
+			});
+	});
+	it("should return a 404 bad request if the user does not send the post with the correct details ", () => {
+		const newCategory = {
+			hello: "euro game",
+			there: 123223232,
+		};
+		return request(app)
+			.post("/api/categories")
+			.send(newCategory)
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.err).toBe("Bad Request!");
+			});
+	});
+});
