@@ -1,4 +1,4 @@
-const { fetchCategories } = require("../models/categoriesModel");
+const { fetchCategories, newCategory } = require("../models/categoriesModel");
 
 exports.getCategories = (req, res, next) => {
 	fetchCategories()
@@ -8,4 +8,13 @@ exports.getCategories = (req, res, next) => {
 		.catch((err) => {
 			next(err);
 		});
+};
+
+exports.postCategory = (req, res, next) => {
+	const createCategory = req.body;
+	newCategory(createCategory)
+		.then((category) => {
+			res.status(201).send({ category });
+		})
+		.catch((err) => next(err));
 };
