@@ -41,7 +41,7 @@ describe("GET /api/reviews", () => {
 			.expect(200)
 			.then(({ body }) => {
 				const reviews = body.reviews;
-				expect(reviews.length).toBe(13);
+				expect(reviews.length).toBe(10);
 				expect(reviews).toBeSortedBy("created_at", { descending: true });
 				reviews.forEach((review) => {
 					expect(review).toHaveProperty("owner", expect.any(String));
@@ -62,7 +62,7 @@ describe("GET /api/reviews", () => {
 			.expect(200)
 			.then(({ body }) => {
 				const reviews = body.reviews;
-				expect(reviews.length).toBe(13);
+				expect(reviews.length).toBe(10);
 				expect(reviews).toBeSortedBy("created_at", { descending: true });
 
 				reviews.forEach((review) => {
@@ -165,6 +165,48 @@ describe("GET /api/reviews", () => {
 			return request(app)
 				.get("/api/reviews?category=children's%20games")
 				.expect(200);
+		});
+		it("200 response for a limit of 10 objects returning", () => {
+			return request(app)
+				.get("/api/reviews?order=asc&limit=10&page=1")
+				.expect(200)
+				.then(({ body }) => {
+					const reviews = body.reviews;
+					expect(reviews).toBeSortedBy("created_at", { ascending: true });
+					expect(reviews).toHaveLength(10);
+					reviews.forEach((review) => {
+						expect(review).toHaveProperty("owner", expect.any(String));
+						expect(review).toHaveProperty("title", expect.any(String));
+						expect(review).toHaveProperty("review_id", expect.any(Number));
+						expect(review).toHaveProperty("category", expect.any(String));
+						expect(review).toHaveProperty("review_img_url", expect.any(String));
+						expect(review).toHaveProperty("created_at", expect.any(String));
+						expect(review).toHaveProperty("designer", expect.any(String));
+						expect(review).toHaveProperty("votes", expect.any(Number));
+						expect(review).toHaveProperty("comment_count", expect.any(String));
+					});
+				});
+		});
+		it(" 200 response for a the remaining objects in page 2, length should equal 3 ", () => {
+			return request(app)
+				.get("/api/reviews?order=asc&limit=10&page=2")
+				.expect(200)
+				.then(({ body }) => {
+					const reviews = body.reviews;
+					expect(reviews).toBeSortedBy("created_at", { ascending: true });
+					expect(reviews).toHaveLength(3);
+					reviews.forEach((review) => {
+						expect(review).toHaveProperty("owner", expect.any(String));
+						expect(review).toHaveProperty("title", expect.any(String));
+						expect(review).toHaveProperty("review_id", expect.any(Number));
+						expect(review).toHaveProperty("category", expect.any(String));
+						expect(review).toHaveProperty("review_img_url", expect.any(String));
+						expect(review).toHaveProperty("created_at", expect.any(String));
+						expect(review).toHaveProperty("designer", expect.any(String));
+						expect(review).toHaveProperty("votes", expect.any(Number));
+						expect(review).toHaveProperty("comment_count", expect.any(String));
+					});
+				});
 		});
 	});
 });
@@ -510,6 +552,3 @@ describe("PATCH /api/comments/:comment_id", () => {
 			});
 	});
 });
-
-//400
-//404
