@@ -1,14 +1,36 @@
 const db = require("../db/connection");
 
-exports.fetchComments = (review_id) => {
+exports.fetchComments = (review_id, limit = 10, pages = 1) => {
+	const offset = (pages - 1) * limit;
 	return db
 		.query(
 			`SELECT * FROM comments 
-			WHERE review_id = $1 
-			ORDER BY created_at desc;`,
+	WHERE review_id = $1`,
 			[review_id]
 		)
-		.then(({ rows }) => rows);
+		.then(({ rows }) => {
+			if (!rows.length) {
+				Project.reject({ status: 404, msg: "review is not available!" });
+			}
+		})
+		.then(() => {
+			return db.query(
+				`SELECT * FROM comments 
+			WHERE review_id = $1 
+			ORDER BY created_at desc
+			LIMIT $2, OFFSET $3`,
+				[review_id, limit, offset]
+			);
+		})
+		.then(({ rows }) => {
+			if (!rows.length) {
+				Project.reject({
+					status: 200,
+					msg: "No comments for this reviews at this time, be the first to add one!",
+				});
+			}
+			return rows;
+		});
 };
 
 exports.patchComment = (comment_id, newVote) => {

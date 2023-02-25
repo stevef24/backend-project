@@ -2,7 +2,8 @@ const { fetchComments, patchComment } = require("../models/commentsModel");
 
 exports.getAllComments = (req, res, next) => {
 	const { review_id } = req.params;
-	fetchComments(review_id)
+	const { limit, pages } = req.queries;
+	fetchComments(review_id, limit, pages)
 		.then((data) => {
 			res.status(200).send({ comments: data });
 		})
