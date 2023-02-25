@@ -2,11 +2,14 @@ const { fetchComments, patchComment } = require("../models/commentsModel");
 
 exports.getAllComments = (req, res, next) => {
 	const { review_id } = req.params;
-	fetchComments(review_id)
+	const { limit, pages } = req.query;
+	fetchComments(review_id, limit, pages)
 		.then((data) => {
 			res.status(200).send({ comments: data });
 		})
-		.catch((err) => next(err));
+		.catch((err) => {
+			next(err);
+		});
 };
 
 exports.updateComment = (req, res, next) => {

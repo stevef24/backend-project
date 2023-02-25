@@ -5,7 +5,6 @@ const reviewRouter = require("./routes/reviewsRoute");
 const commentsRouter = require("./routes/commentsRoute");
 const userRouter = require("./routes/userRoute");
 const categoryRouter = require("./routes/categoryRoute");
-
 const {
 	errorPSQLHandler,
 	handleCustomErrors,
