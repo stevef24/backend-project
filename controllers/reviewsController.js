@@ -4,7 +4,11 @@ const {
 	updateReview,
 	newComment,
 	removeComment,
+
+	removeReview,
+
 	newReview,
+
 } = require("../models/reviewsModel");
 
 exports.getReviews = (req, res, next) => {
@@ -58,11 +62,21 @@ exports.deleteComment = (req, res, next) => {
 		});
 };
 
+exports.deleteReview = (req, res, next) => {
+	const { review_id } = req.params;
+	removeReview(review_id)
+		.then(() => {
+			res.status(204).send();
+		})
+		.catch((err) => next(err));
+};
+
 exports.postReviews = (req, res, next) => {
 	const post = req.body;
 	newReview(post)
 		.then((review) => {
 			res.status(201).send({ review: { ...review, comment_count: 0 } });
+
 		})
 		.catch((err) => next(err));
 };
