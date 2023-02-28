@@ -1,10 +1,17 @@
 const db = require("../db/connection");
 
-exports.fetchReviews = (sort_by = "created_at", order, category) => {
-	const paramsArr = [];
+exports.fetchReviews = (
+	sort_by = "created_at",
+	order,
+	category,
+	limit = 10,
+	page = 1
+) => {
+	const offsetBy = (page - 1) * 10;
+	const paramsArr = [limit, offsetBy];
 	const validCategories = [
-		"euro game",
 		"social deduction",
+		"euro game",
 		"dexterity",
 		`children's games`,
 	];
@@ -41,18 +48,21 @@ exports.fetchReviews = (sort_by = "created_at", order, category) => {
 	let defaultQuery = `SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.review_id) AS comment_count
 	FROM reviews
 	LEFT JOIN comments ON reviews.review_id = comments.review_id`;
+
 	if (category) {
 		defaultQuery += ` WHERE category = $1
 		GROUP BY reviews.review_id`;
-		paramsArr.push(category);
+		paramsArr.unshift(category);
 	} else {
 		defaultQuery += ` GROUP BY reviews.review_id`;
 	}
-	if (order) {
-		defaultQuery += ` ORDER BY created_at ${order}`;
-	} else if (sort_by) {
-		defaultQuery += ` ORDER BY ${sort_by} DESC`;
-	}
+	order
+		? (defaultQuery += ` ORDER BY created_at ${order}`)
+		: (defaultQuery += ` ORDER BY ${sort_by} DESC`);
+
+	category
+		? (defaultQuery += ` LIMIT $2 OFFSET $3`)
+		: (defaultQuery += ` LIMIT $1 OFFSET $2`);
 
 	return db.query(defaultQuery, paramsArr).then(({ rows }) => {
 		if (!rows.length && !validCategory) {
