@@ -553,6 +553,74 @@ describe("PATCH /api/comments/:comment_id", () => {
 	});
 });
 
+
+describe("POST /api/reviews", () => {
+	it("should return a 201 created response, with the object newly created", () => {
+		const newReview = {
+			title: "Elevate Your Strategy Game with Dominion",
+			designer: "Donald X. Vaccarino",
+			owner: "dav3rid",
+			review_img_url:
+				"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?w=700&h=700",
+			review_body:
+				"Dominion is a deck-building game that requires strategic planning and quick thinking. You'll have to choose which cards to purchase and which to keep in your hand in order to gain the most victory points. The game is easy to learn but difficult to master, making it great for players of all skill levels. The artwork is beautiful and the replay value is high. Overall, Dominion is a must-have for any strategy game fan.",
+			category: "euro game",
+		};
+		return request(app)
+			.post("/api/reviews")
+			.send(newReview)
+			.expect(201)
+			.then(({ body }) => {
+				const review = body.review;
+				expect(review).toHaveProperty("owner", expect.any(String));
+				expect(review).toHaveProperty("title", expect.any(String));
+				expect(review).toHaveProperty("review_body", expect.any(String));
+				expect(review).toHaveProperty("designer", expect.any(String));
+				expect(review).toHaveProperty("category", expect.any(String));
+				expect(review).toHaveProperty("review_img_url", expect.any(String));
+				expect(review).toHaveProperty("review_id", expect.any(Number));
+				expect(review).toHaveProperty("votes", expect.any(Number));
+				expect(review).toHaveProperty("created_at", expect.any(String));
+				expect(review).toHaveProperty("comment_count", 0);
+			});
+	});
+	it("should return a 400 if the owner or category do not exist ", () => {
+		const newReview = {
+			owner: "stav",
+			title: "the greatest website ever",
+			review_body:
+				"the best website i have ever seen, the backend API is one if no the best of all times",
+			designer: "stavros",
+			category: "dextrity",
+			review_img_url:
+				"https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+		};
+		return request(app)
+			.post("/api/reviews")
+			.send(newReview)
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.err).toBe("The user or category do not exist");
+			});
+	});
+	it("404 if the path is invalid ", () => {
+		const newReview = {
+			owner: "stav",
+			title: "the greatest website ever",
+			review_body:
+				"the best website i have ever seen, the backend API is one if no the best of all times",
+			designer: "stavros",
+			category: "dextrity",
+			review_img_url:
+				"https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+		};
+		return request(app)
+			.post("/api/reviews12232232")
+			.send(newReview)
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe("Path not found");
+        
 describe(`GET /api/reviews/:review_id/comments`, () => {
 	it("return a 200 request and the data in the correct order ", () => {
 		return request(app)

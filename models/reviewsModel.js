@@ -188,12 +188,45 @@ exports.removeComment = (comment_id) => {
 		});
 };
 
+
 exports.removeReview = (review_id) => {
 	return db
 		.query(`DELETE FROM reviews WHERE review_id=$1 RETURNING *;`, [review_id])
 		.then(({ rows }) => {
 			if (!rows.length) {
 				return Promise.reject({ status: 404, msg: `review does not exist` });
+			}
+			return rows[0];
+		});
+};
+
+exports.newReview = (post) => {
+	const { owner, title, review_body, designer, category, review_img_url } =
+		post;
+	return Promise.all([
+		db.query(`SELECT * FROM users WHERE username=$1`, [owner]),
+		db.query("SELECT * FROM categories WHERE slug = $1", [category]),
+	])
+		.then(([usersResult, categoriesResult]) => {
+			const [usersRows, catagoriesRows] = [
+				usersResult.rows,
+				categoriesResult.rows,
+			];
+			if (!usersRows.length || !catagoriesRows.length) {
+				return Promise.reject({
+					status: 400,
+					msg: "The user or category do not exist",
+				});
+			}
+			return db.query(
+				`INSERT INTO reviews (owner, title, review_body, designer, category, review_img_url)
+			 VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+				[owner, title, review_body, designer, category, review_img_url]
+			);
+		})
+		.then(({ rows }) => {
+			if (!rows.length) {
+				return Promise.reject({ status: 400, msg: "Incorrect input" });n
 			}
 			return rows[0];
 		});
