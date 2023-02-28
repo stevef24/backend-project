@@ -62,7 +62,7 @@ exports.postReviews = (req, res, next) => {
 	const post = req.body;
 	newReview(post)
 		.then((review) => {
-			res.status(201).send({ review });
+			res.status(201).send({ review: { ...review, comment_count: 0 } });
 		})
 		.catch((err) => next(err));
 };

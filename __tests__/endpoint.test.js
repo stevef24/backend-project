@@ -538,6 +538,7 @@ describe("POST /api/reviews", () => {
 				expect(review).toHaveProperty("review_id", expect.any(Number));
 				expect(review).toHaveProperty("votes", expect.any(Number));
 				expect(review).toHaveProperty("created_at", expect.any(String));
+				expect(review).toHaveProperty("comment_count", 0);
 			});
 	});
 	it("should return a 400 if the owner or category do not exist ", () => {
