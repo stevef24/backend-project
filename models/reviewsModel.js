@@ -196,6 +196,5 @@ exports.removeReview = (review_id) => {
 				return Promise.reject({ status: 404, msg: `review does not exist` });
 			}
 			return rows[0];
-		})
-		.catch((err) => console.log(err));
+		});
 };
