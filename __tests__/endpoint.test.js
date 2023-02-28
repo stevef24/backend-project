@@ -553,7 +553,6 @@ describe("PATCH /api/comments/:comment_id", () => {
 	});
 });
 
-
 describe("POST /api/reviews", () => {
 	it("should return a 201 created response, with the object newly created", () => {
 		const newReview = {
@@ -620,119 +619,122 @@ describe("POST /api/reviews", () => {
 			.expect(404)
 			.then(({ body }) => {
 				expect(body.msg).toBe("Path not found");
-        
-describe(`GET /api/reviews/:review_id/comments`, () => {
-	it("return a 200 request and the data in the correct order ", () => {
-		return request(app)
-			.get("/api/reviews/2/comments")
-			.expect(200)
-			.then(({ body }) => {
-				const comments = body.comments;
-				expect(comments).toHaveLength(3);
-				comments.forEach((comment) => {
-					expect(comment).toHaveProperty("comment_id", expect.any(Number));
-					expect(comment).toHaveProperty("body", expect.any(String));
-					expect(comment).toHaveProperty("review_id", 2);
-					expect(comment).toHaveProperty("author", expect.any(String));
-					expect(comment).toHaveProperty("votes", expect.any(Number));
-					expect(comment).toHaveProperty("created_at", expect.any(String));
-				});
-				expect(comments).toBeSortedBy("created_at", { descending: true });
 			});
 	});
-	it("404 Error if given the wrong path", () => {
-		return request(app).get("/api/banana/:review_id/comments").expect(404);
-	});
-	it("should responds with 400 for a non id string eg get /api/reviews/hello/comments ", () => {
-		return request(app)
-			.get("/api/reviews/hello/comments")
-			.expect(400)
-			.then(({ body }) => {
-				expect(body.msg).toBe("Bad request");
-			});
-	});
-	it("should responds with 404 where a review does not exist  ", () => {
-		return request(app)
-			.get("/api/reviews/500/comments")
-			.expect(404)
-			.then(({ body }) => {
-				expect(body.err).toBe("review is not available!");
-			});
-	});
-	it("should responds with 200 for a review with no comments ", () => {
-		return request(app)
-			.get("/api/reviews/5/comments")
-			.expect(200)
-			.then(({ body }) => {
-				expect(body.comments.msg).toBe(
-					"No comments for this reviews at this time, be the first to add one!"
-				);
-			});
-	});
-	it("should responds with 200 with a limit of 2 per page ", () => {
-		return request(app)
-			.get("/api/reviews/2/comments?limit=2&pages=1")
-			.expect(200)
-			.then(({ body }) => {
-				const comments = body.comments;
-				expect(comments).toHaveLength(2);
-				comments.forEach((comment) => {
-					expect(comment).toHaveProperty("comment_id", expect.any(Number));
-					expect(comment).toHaveProperty("body", expect.any(String));
-					expect(comment).toHaveProperty("review_id", 2);
-					expect(comment).toHaveProperty("author", expect.any(String));
-					expect(comment).toHaveProperty("votes", expect.any(Number));
-					expect(comment).toHaveProperty("created_at", expect.any(String));
-				});
-				expect(comments).toBeSortedBy("created_at", { descending: true });
-			});
-	});
-});
 
-describe(`POST /api/categories`, () => {
-	it("should return a 201 created with the correct object details that were created", () => {
-		const newCategory = {
-			slug: "sports",
-			description:
-				"Sports gaming is a category of video games that simulate various sports and allow players to compete against each other or against computer-controlled opponents. These games typically feature realistic graphics, physics, and gameplay mechanics that aim to replicate the experience of playing a real sport",
-		};
-		return request(app)
-			.post("/api/categories")
-			.send(newCategory)
-			.expect(201)
-			.then(({ body }) => {
-				const category = body.category;
-				expect(category).toHaveProperty("slug", "sports");
-				expect(category).toHaveProperty(
-					"description",
-					"Sports gaming is a category of video games that simulate various sports and allow players to compete against each other or against computer-controlled opponents. These games typically feature realistic graphics, physics, and gameplay mechanics that aim to replicate the experience of playing a real sport"
-				);
-			});
+	describe(`GET /api/reviews/:review_id/comments`, () => {
+		it("return a 200 request and the data in the correct order ", () => {
+			return request(app)
+				.get("/api/reviews/2/comments")
+				.expect(200)
+				.then(({ body }) => {
+					const comments = body.comments;
+					expect(comments).toHaveLength(3);
+					comments.forEach((comment) => {
+						expect(comment).toHaveProperty("comment_id", expect.any(Number));
+						expect(comment).toHaveProperty("body", expect.any(String));
+						expect(comment).toHaveProperty("review_id", 2);
+						expect(comment).toHaveProperty("author", expect.any(String));
+						expect(comment).toHaveProperty("votes", expect.any(Number));
+						expect(comment).toHaveProperty("created_at", expect.any(String));
+					});
+					expect(comments).toBeSortedBy("created_at", { descending: true });
+				});
+		});
+		it("404 Error if given the wrong path", () => {
+			return request(app).get("/api/banana/:review_id/comments").expect(404);
+		});
+		it("should responds with 400 for a non id string eg get /api/reviews/hello/comments ", () => {
+			return request(app)
+				.get("/api/reviews/hello/comments")
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Bad request");
+				});
+		});
+		it("should responds with 404 where a review does not exist  ", () => {
+			return request(app)
+				.get("/api/reviews/500/comments")
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.err).toBe("review is not available!");
+				});
+		});
+		it("should responds with 200 for a review with no comments ", () => {
+			return request(app)
+				.get("/api/reviews/5/comments")
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.comments.msg).toBe(
+						"No comments for this reviews at this time, be the first to add one!"
+					);
+				});
+		});
+		it("should responds with 200 with a limit of 2 per page ", () => {
+			return request(app)
+				.get("/api/reviews/2/comments?limit=2&pages=1")
+				.expect(200)
+				.then(({ body }) => {
+					const comments = body.comments;
+					expect(comments).toHaveLength(2);
+					comments.forEach((comment) => {
+						expect(comment).toHaveProperty("comment_id", expect.any(Number));
+						expect(comment).toHaveProperty("body", expect.any(String));
+						expect(comment).toHaveProperty("review_id", 2);
+						expect(comment).toHaveProperty("author", expect.any(String));
+						expect(comment).toHaveProperty("votes", expect.any(Number));
+						expect(comment).toHaveProperty("created_at", expect.any(String));
+					});
+					expect(comments).toBeSortedBy("created_at", { descending: true });
+				});
+		});
 	});
-	it("should return a 400 if the user is trying to insert a category that already exists", () => {
-		const newCategory = {
-			slug: "euro game",
-			description: "Abstact games that involve little luck",
-		};
-		return request(app)
-			.post("/api/categories")
-			.send(newCategory)
-			.expect(400)
-			.then(({ body }) => {
-				expect(body.err).toBe("The category already exists!");
-			});
-	});
-	it("should return a 404 bad request if the user does not send the post with the correct details ", () => {
-		const newCategory = {
-			hello: "euro game",
-			there: 123223232,
-		};
-		return request(app)
-			.post("/api/categories")
-			.send(newCategory)
-			.expect(404)
-			.then(({ body }) => {
-				expect(body.err).toBe("Bad Request!");
-			});
+
+	describe(`POST /api/categories`, () => {
+		it("should return a 201 created with the correct object details that were created", () => {
+			const newCategory = {
+				slug: "sports",
+				description:
+					"Sports gaming is a category of video games that simulate various sports and allow players to compete against each other or against computer-controlled opponents. These games typically feature realistic graphics, physics, and gameplay mechanics that aim to replicate the experience of playing a real sport",
+			};
+			return request(app)
+				.post("/api/categories")
+				.send(newCategory)
+				.expect(201)
+				.then(({ body }) => {
+					const category = body.category;
+					expect(category).toHaveProperty("slug", "sports");
+					expect(category).toHaveProperty(
+						"description",
+						"Sports gaming is a category of video games that simulate various sports and allow players to compete against each other or against computer-controlled opponents. These games typically feature realistic graphics, physics, and gameplay mechanics that aim to replicate the experience of playing a real sport"
+					);
+				});
+		});
+		it("should return a 400 if the user is trying to insert a category that already exists", () => {
+			const newCategory = {
+				slug: "euro game",
+				description: "Abstact games that involve little luck",
+			};
+			return request(app)
+				.post("/api/categories")
+				.send(newCategory)
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.err).toBe("The category already exists!");
+				});
+		});
+		it("should return a 404 bad request if the user does not send the post with the correct details ", () => {
+			const newCategory = {
+				hello: "euro game",
+				there: 123223232,
+			};
+			return request(app)
+				.post("/api/categories")
+				.send(newCategory)
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.err).toBe("Bad Request!");
+				});
+		});
 	});
 });
