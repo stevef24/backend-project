@@ -187,3 +187,15 @@ exports.removeComment = (comment_id) => {
 			return rows;
 		});
 };
+
+exports.removeReview = (review_id) => {
+	return db
+		.query(`DELETE FROM reviews WHERE review_id=$1 RETURNING *;`, [review_id])
+		.then(({ rows }) => {
+			if (!rows.length) {
+				return Promise.reject({ status: 404, msg: `review does not exist` });
+			}
+			return rows[0];
+		})
+		.catch((err) => console.log(err));
+};

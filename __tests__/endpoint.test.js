@@ -668,3 +668,25 @@ describe(`POST /api/categories`, () => {
 			});
 	});
 });
+
+xdescribe("DELETE /api/reviews/:review_id", () => {
+	xit("delete the given review by review_id and respond with 204", () => {
+		return request(app).delete("/api/reviews/2").expect(204);
+	});
+	xit("returns 404 if the review deleted doesn't exist ", () => {
+		return request(app)
+			.delete("/api/reviews/10000")
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.err).toBe(`review does not exist`);
+			});
+	});
+	xit("returns 400 if the review path is correct but has invalid inout ie id = banana ", () => {
+		return request(app)
+			.delete("/api/reviews/banana")
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe(`Bad request`);
+			});
+	});
+});
