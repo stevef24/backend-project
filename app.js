@@ -11,10 +11,13 @@ const {
 	error500Handler,
 } = require("./controllers/errorHandeling");
 
+const cors = require("cors");
+
 app.get("/api", (req, res, next) => {
 	res.status(200).send({ endpoints });
 });
 
+app.use(cors());
 app.use(express.json());
 app.use("/api/reviews", reviewRouter);
 app.use("/api/comments", commentsRouter);
