@@ -26,6 +26,7 @@ exports.fetchReviews = (
 		"created_at",
 		"votes",
 		undefined,
+		"comment_count",
 	];
 	const validCategory = validCategories.includes(category) ? true : false;
 	const validOrder = validOrderArr.includes(order) ? true : false;
