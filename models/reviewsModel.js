@@ -189,6 +189,18 @@ exports.removeComment = (comment_id) => {
 		});
 };
 
+
+exports.removeReview = (review_id) => {
+	return db
+		.query(`DELETE FROM reviews WHERE review_id=$1 RETURNING *;`, [review_id])
+		.then(({ rows }) => {
+			if (!rows.length) {
+				return Promise.reject({ status: 404, msg: `review does not exist` });
+			}
+			return rows[0];
+		});
+};
+
 exports.newReview = (post) => {
 	const { owner, title, review_body, designer, category, review_img_url } =
 		post;
@@ -215,7 +227,7 @@ exports.newReview = (post) => {
 		})
 		.then(({ rows }) => {
 			if (!rows.length) {
-				return Promise.reject({ status: 400, msg: "Incorrect input" });
+				return Promise.reject({ status: 400, msg: "Incorrect input" });n
 			}
 			return rows[0];
 		});
